@@ -54,7 +54,7 @@ python -m PyInstaller --noconfirm --clean --onedir --windowed --name PriceRadarB
 5. Extraia todos os arquivos antes de executar `PriceRadarBR.exe`.
 6. Para download público, crie uma **Release** no repositório e anexe o ZIP validado. Compartilhe a página da release.
 
-O teste de importação não substitui o teste funcional com Chrome. Nenhum repositório foi criado nem arquivo publicado automaticamente nesta entrega.
+O teste de importação não substitui o teste funcional com Chrome. O código está disponível no repositório glearflame/PriceRadarBR. Execute o workflow para gerar o pacote Windows.
 
 ## Uso
 

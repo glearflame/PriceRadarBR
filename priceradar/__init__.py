@@ -1,0 +1,1 @@
+"""PriceRadar BR desktop application."""

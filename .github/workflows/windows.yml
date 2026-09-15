@@ -1,0 +1,29 @@
+name: Build Windows
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          architecture: x64
+      - run: python -m pip install -r requirements.txt
+      - run: python -m unittest discover -s tests -v
+      - run: python -m PyInstaller --noconfirm --clean --onedir --windowed --name PriceRadarBR --collect-all customtkinter --collect-all undetected_chromedriver --collect-all reportlab --hidden-import PIL._tkinter_finder main.py
+      - name: Verify executable imports
+        shell: pwsh
+        run: |
+          $p = Start-Process dist/PriceRadarBR/PriceRadarBR.exe -ArgumentList '--self-test' -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw 'Executable smoke test failed' }
+      - run: python -m pip freeze > dist/PriceRadarBR/DEPENDENCIES.txt
+      - run: Copy-Item README.md dist/PriceRadarBR/README.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PriceRadarBR-Windows
+          path: dist/PriceRadarBR/
+          if-no-files-found: error
