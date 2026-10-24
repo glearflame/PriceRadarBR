@@ -1,5 +1,10 @@
 # PriceRadar BR
 
+[![CI](https://img.shields.io/github/actions/workflow/status/glearflame/PriceRadarBR/windows.yml?label=build%20windows)](https://github.com/glearflame/PriceRadarBR/actions/workflows/windows.yml)
+[![Python](https://img.shields.io/badge/python-3.11+-blue)](https://www.python.org/)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](tests/test_core.py)
+
 Aplicativo desktop Python de comparação de ofertas do Mercado Livre, Amazon Brasil e Shopee.
 
 ## Estado desta entrega
@@ -12,6 +17,12 @@ A interface usa microinterações nativas e barra de progresso indeterminada; n�
 
 **Validação feita:** cinco testes automatizados de valores monetários, domínios, persistência, parsers com HTML sintético e exportações; importação das dependências; compilação sintática; inspeção visual do PDF de teste.
 **Não validado:** renderização gráfica do aplicativo (sem servidor gráfico disponível), coleta real nas lojas, execução Windows e EXE. Os seletores são adaptadores iniciais e podem precisar de ajuste nas páginas atuais. Não considere esta versão homologada para produção sem esses testes.
+
+## Versão
+
+- **v1.0.0** — primeira versão pública. Interface CustomTkinter, consulta em três lojas, histórico/favoritos locais, exportação Excel e PDF, empacotamento Windows com PyInstaller.
+
+O EXE para Windows é gerado pelo workflow de build (GitHub Actions, `windows-latest`) e não vem pré-compilado neste repositório.
 
 ## Gerar o EXE em Windows — caminho mais simples
 
