@@ -7,6 +7,8 @@
 
 Comparador desktop de ofertas da **Amazon Brasil, Mercado Livre e Shopee**, com histórico, favoritos e exportação para Excel/PDF. Local, sem conta e sem telemetria.
 
+![PriceRadar BR exibindo ofertas reais coletadas na Amazon](docs/assets/priceradar-linux.png)
+
 ## Download para Windows
 
 1. Baixe `PriceRadarBR-Windows.zip` na [página de Releases](https://github.com/glearflame/PriceRadarBR/releases/latest).

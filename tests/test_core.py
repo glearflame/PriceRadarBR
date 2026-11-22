@@ -1,4 +1,4 @@
-import tempfile, unittest
+import sqlite3, tempfile, unittest
 from pathlib import Path
 from priceradar.core import Database, Offer, money, valid_url
 from priceradar.scraper import parse, relevant, headless_enabled, diagnose_page, should_stop_waiting, should_retry_page, canonical_url
@@ -11,6 +11,13 @@ class CoreTests(unittest.TestCase):
         self.assertTrue(valid_url('https://www.amazon.com.br/dp/ABC'))
         for bad in ['https://amazon.com.br.evil.test/x','http://amazon.com.br','https://evil.test','https://user@amazon.com.br','https://amazon.com.br:bad']:
             self.assertFalse(valid_url(bad))
+    def test_connections_close_after_use(self):
+        with tempfile.TemporaryDirectory() as d:
+            db=Database(Path(d)/'db')
+            with db.connect() as connection:
+                connection.execute('SELECT 1')
+            with self.assertRaises(sqlite3.ProgrammingError):
+                connection.execute('SELECT 1')
     def test_storage(self):
         with tempfile.TemporaryDirectory() as d:
             db=Database(Path(d)/'db'); offer=Offer('Amazon','Produto',12990,'https://amazon.com.br/dp/X')
