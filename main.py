@@ -8,7 +8,16 @@ def main():
     if '--self-test' in sys.argv:
         from priceradar.core import money
         assert money('R$ 1.234,56')==123456
-        import customtkinter, undetected_chromedriver, openpyxl, reportlab, PIL
+        import customtkinter, selenium, openpyxl, reportlab, PIL
+        return
+    if '--browser-self-test' in sys.argv:
+        from priceradar.scraper import create_driver
+        driver=create_driver()
+        try:
+            driver.get('data:text/html,<title>PriceRadar BR OK</title>')
+            assert driver.title=='PriceRadar BR OK'
+        finally:
+            driver.quit()
         return
     from priceradar.app import App
     App().mainloop()

@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from dataclasses import dataclass, asdict
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
@@ -47,7 +48,14 @@ class Database:
         self.path = path
         with self.connect() as db:
             db.executescript('CREATE TABLE IF NOT EXISTS history(id INTEGER PRIMARY KEY, query TEXT, created TEXT, offers TEXT); CREATE TABLE IF NOT EXISTS favorites(url TEXT PRIMARY KEY, offer TEXT); CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY,value TEXT);')
-    def connect(self): return sqlite3.connect(self.path, timeout=10)
+    @contextmanager
+    def connect(self):
+        connection = sqlite3.connect(self.path, timeout=10)
+        try:
+            with connection:
+                yield connection
+        finally:
+            connection.close()
     def save(self, query, offers):
         with self.connect() as db:
             db.execute('INSERT INTO history(query,created,offers) VALUES(?,?,?)', (query, datetime.now().isoformat(timespec='seconds'),json.dumps([asdict(o) for o in offers])))

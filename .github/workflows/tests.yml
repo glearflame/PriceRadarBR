@@ -1,0 +1,41 @@
+name: Tests
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install -r requirements.txt
+      - run: python -m unittest discover -s tests -v
+  desktop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: sudo apt-get update && sudo apt-get install -y xvfb
+      - run: python -m pip install -r requirements.txt
+      - name: Exercise all desktop views
+        env:
+          PRICERADAR_GUI_TESTS: '1'
+        run: xvfb-run -a -s '-screen 0 1280x900x24' python -m unittest tests.test_app -v
+      - name: Capture desktop with real collected offers
+        run: xvfb-run -a -s '-screen 0 1280x900x24' python scripts/capture_app.py --offers docs/live-validation.json --output artifacts/priceradar-linux.png
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PriceRadarBR-desktop-screenshot
+          path: artifacts/priceradar-linux.png
+          if-no-files-found: error

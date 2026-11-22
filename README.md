@@ -1,110 +1,94 @@
 # PriceRadar BR
 
-[![CI](https://img.shields.io/github/actions/workflow/status/glearflame/PriceRadarBR/windows.yml?label=build%20windows)](https://github.com/glearflame/PriceRadarBR/actions/workflows/windows.yml)
-[![Python](https://img.shields.io/badge/python-3.11+-blue)](https://www.python.org/)
+[![Tests](https://github.com/glearflame/PriceRadarBR/actions/workflows/tests.yml/badge.svg)](https://github.com/glearflame/PriceRadarBR/actions/workflows/tests.yml)
+[![Windows build](https://github.com/glearflame/PriceRadarBR/actions/workflows/windows.yml/badge.svg)](https://github.com/glearflame/PriceRadarBR/actions/workflows/windows.yml)
+[![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](tests/test_core.py)
 
-Aplicativo desktop Python de comparação de ofertas do Mercado Livre, Amazon Brasil e Shopee.
+Comparador desktop de ofertas da **Amazon Brasil, Mercado Livre e Shopee**, com histórico, favoritos e exportação para Excel/PDF. Local, sem conta e sem telemetria.
 
-## Estado desta entrega
+![PriceRadar BR exibindo ofertas reais coletadas na Amazon](docs/assets/priceradar-linux.png)
 
-**Este pacote contém o projeto fonte; não contém um EXE Windows compilado.** Foi produzido e verificado em Linux. PyInstaller não compila executáveis Windows em Linux. O script e o workflow abaixo realizam a compilação em Windows. O workflow foi fornecido, mas não foi executado nesta entrega.
+## Download para Windows
 
-Implementado: interface CustomTkinter escura/clara, navegação lateral, cards ordenados por preço, destaque do menor preço coletado, busca textual e extração do título por link, Selenium + undetected-chromedriver + BeautifulSoup, consulta em thread, progresso animado, hover, cancelamento cooperativo, histórico local limitado a 100 buscas, favoritos, filtros por loja, exportação Excel/PDF, atalhos, logs rotativos e empacotamento Windows.
+1. Baixe `PriceRadarBR-Windows.zip` na [página de Releases](https://github.com/glearflame/PriceRadarBR/releases/latest).
+2. Extraia o ZIP inteiro.
+3. Execute `PriceRadarBR.exe`. O Google Chrome precisa estar instalado para consultar as lojas.
 
-A interface usa microinterações nativas e barra de progresso indeterminada; não inclui animações complexas de transição. Pillow gera a marca da interface. Não há servidor, autenticação do aplicativo nem telemetria.
+O pacote é gerado no Windows pelo GitHub Actions e passa por um smoke test do executável. Não é necessário instalar Python.
 
-**Validação feita:** cinco testes automatizados de valores monetários, domínios, persistência, parsers com HTML sintético e exportações; importação das dependências; compilação sintática; inspeção visual do PDF de teste.
-**Não validado:** renderização gráfica do aplicativo (sem servidor gráfico disponível), coleta real nas lojas, execução Windows e EXE. Os seletores são adaptadores iniciais e podem precisar de ajuste nas páginas atuais. Não considere esta versão homologada para produção sem esses testes.
+## Estado real das lojas
 
-## Versão
+O projeto mostra o que conseguiu coletar e o motivo de cada falha; **não preenche resultados com dados fictícios nem contorna CAPTCHA/login**.
 
-- **v1.0.0** — primeira versão pública. Interface CustomTkinter, consulta em três lojas, histórico/favoritos locais, exportação Excel e PDF, empacotamento Windows com PyInstaller.
+Validação real de **22/11/2026**, com a busca `teclado logitech k380`:
 
-O EXE para Windows é gerado pelo workflow de build (GitHub Actions, `windows-latest`) e não vem pré-compilado neste repositório.
+| Loja | Resultado |
+|---|---|
+| Amazon Brasil | Ofertas reais coletadas, filtradas por modelo e convertidas em URLs canônicas |
+| Mercado Livre | Página de erro da loja na conexão testada |
+| Shopee | Verificação de tráfego na conexão testada |
 
-## Gerar o EXE em Windows — caminho mais simples
+O relatório completo, com timestamp, preços e URLs obtidos na execução, está em [`docs/live-validation.json`](docs/live-validation.json). O resultado varia por conexão, data e alterações das páginas. Abra a loja e confira anúncio, variação, vendedor, frete e cupons antes de comprar.
 
-1. Instale Python **3.11 de 64 bits**, incluindo o Python Launcher (`py`), de https://www.python.org/downloads/windows/.
-2. Instale Google Chrome. Ele é necessário para consultas, também na versão empacotada.
-3. Extraia este ZIP para uma pasta gravável, por exemplo `C:\PriceRadarBR`.
-4. Abra a pasta e execute `build_windows.bat` com dois cliques.
-5. Aguarde a instalação, os testes e a compilação; a internet é necessária.
-6. O aplicativo estará em `dist\PriceRadarBR\PriceRadarBR.exe`.
-7. O pacote para compartilhar estará em `dist\PriceRadarBR-Windows.zip`.
+## Recursos
 
-**Mantenha toda a pasta junto do EXE**, incluindo `_internal`. Não envie apenas o executável. Usamos `--onedir` para empacotar os recursos do CustomTkinter de forma explícita. O usuário final não precisa instalar Python; precisa de Chrome e internet. O driver é baixado na primeira consulta, podendo exigir permissão de escrita e acesso à rede.
+- Busca por nome ou por link completo de produto.
+- Resultados ordenados por preço, com filtro por loja e destaque do menor valor coletado.
+- Filtro obrigatório de tokens numéricos de modelo: `K250` não passa numa busca por `K380`.
+- URLs de patrocínio/rastreamento da Amazon convertidas para `/dp/ASIN` e deduplicadas.
+- Favoritos e histórico local das últimas 100 buscas em SQLite.
+- Exportação da visualização atual para XLSX e PDF.
+- Consulta em segundo plano, cancelamento cooperativo e diagnóstico individual por loja.
+- Modo headless automático em Linux sem display; `PRICERADAR_HEADLESS=1` força headless e `0` força janela.
+- Temas claro/escuro e atalhos `Ctrl+K`, `Enter`, `Esc` e `Ctrl+E`.
 
-### Comando exato configurado no script e no workflow
+## Executar do código-fonte
 
-```bat
-python -m PyInstaller --noconfirm --clean --onedir --windowed --name PriceRadarBR --collect-all customtkinter --collect-all undetected_chromedriver --collect-all reportlab --hidden-import PIL._tkinter_finder main.py
-```
+Requer Python 3.11+ e Chrome ou Chromium.
 
-No `.bat`, `python` é chamado por `.venv\Scripts\python`. Esse comando **não foi executado para Windows neste ambiente Linux**.
-
-### Compilação manual
-
-```bat
-py -3.11 -m venv .venv
-.venv\Scripts\activate
-python -m pip install --upgrade pip
+```bash
+python -m venv .venv
+# Linux/macOS:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 python -m unittest discover -s tests -v
 python main.py
-python -m PyInstaller --noconfirm --clean --onedir --windowed --name PriceRadarBR --collect-all customtkinter --collect-all undetected_chromedriver --collect-all reportlab --hidden-import PIL._tkinter_finder main.py
 ```
 
-## Gerar e baixar pelo GitHub, sem compilar no seu computador
+O Selenium seleciona um ChromeDriver compatível. Se `chromedriver` já estiver no `PATH`, ele é usado diretamente.
 
-1. Crie um repositório e envie o **conteúdo** desta pasta na raiz, incluindo `.github/workflows/windows.yml`.
-2. No GitHub, vá em **Actions → Build Windows → Run workflow**.
-3. Aguarde o resultado. O workflow testa o código, gera o executável em Windows e testa as importações do EXE.
-4. Na execução concluída, baixe **Artifacts → PriceRadarBR-Windows**.
-5. Extraia todos os arquivos antes de executar `PriceRadarBR.exe`.
-6. Para download público, crie uma **Release** no repositório e anexe o ZIP validado. Compartilhe a página da release.
+## Verificação ao vivo e desenvolvimento
 
-O teste de importação não substitui o teste funcional com Chrome. O código está disponível no repositório glearflame/PriceRadarBR. Execute o workflow para gerar o pacote Windows.
+```bash
+# Executa as três lojas e salva exatamente o que foi coletado:
+PRICERADAR_HEADLESS=1 python scripts/check_live.py \
+  'teclado logitech k380' --output docs/live-validation.json
 
-## Uso
+# Teste de integração real da Amazon; desativado por padrão na suíte offline:
+PRICERADAR_LIVE=1 PRICERADAR_HEADLESS=1 python -m unittest tests.test_live -v
+```
 
-- Busque por marca + modelo; termos genéricos misturam produtos.
-- Cole um link HTTPS completo de uma das três lojas para extrair o título. Links encurtados não são aceitos.
-- O Chrome abre em janela separada e não utiliza sua sessão pessoal. As três lojas são consultadas sequencialmente, com tempo de espera limitado por página.
-- Os resultados aparecem conforme cada loja termina. Uma falha não descarta as ofertas já coletadas.
-- **Menor preço coletado** significa o menor valor entre os anúncios visíveis, não a garantia de menor preço do mercado nem equivalência exata do produto.
-- Confira modelo, tamanho, voltagem, condição, vendedor, frete e cupons na loja antes de comprar. O filtro textual é heurístico e pode incluir acessórios ou variantes.
-- Favoritos guardam o preço no momento da coleta. Histórico e favoritos não são atualizados em segundo plano; faça nova busca.
-- Excel/PDF exportam as ofertas da visualização atual, respeitando filtro e ordem.
-- `Ctrl+K`: foco na busca. `Enter`: buscar/cancelar. `Esc`: cancelar. `Ctrl+E`: exportar Excel.
-- Cancelar e fechar aguardam a operação de navegador atual terminar. Inicialização/download do driver dependem da biblioteca externa e podem demorar.
+A CI executa a suíte offline em Python 3.11/3.12, abre e navega pelas telas com Xvfb, captura a interface usando as ofertas reais do relatório e valida o build Windows com PyInstaller.
 
-## Dados e diagnóstico
+Para gerar o ZIP localmente no Windows, execute `build_windows.bat`. Tags `v*` disparam o build e publicam o ZIP em Releases automaticamente.
 
-Windows: `%LOCALAPPDATA%\PriceRadarBR\radar.sqlite3` e `app.log` (até três arquivos de aproximadamente 1 MB).
-Linux: `~/.local/share/PriceRadarBR/`.
+## Arquitetura
 
-Faça backup do banco com o aplicativo fechado. Não há coleta de credenciais. Logs podem conter detalhes de URLs consultadas: revise antes de compartilhar.
+- `priceradar/scraper.py`: Selenium, páginas públicas renderizadas, adaptadores, diagnóstico e relevância.
+- `priceradar/core.py`: modelo de oferta, dinheiro em centavos, validação de URLs e SQLite.
+- `priceradar/app.py`: interface CustomTkinter; eventos da thread chegam à UI por fila.
+- `priceradar/exporters.py`: XLSX/PDF com escrita temporária e troca atômica.
+- `scripts/check_live.py`: relatório reproduzível das consultas reais.
+- `tests/`: testes offline, teste gráfico opcional e integração ao vivo opt-in.
 
-Se ChromeDriver informar versão incompatível, abra `chrome://version` no Chrome, copie o número principal e configure-o em **Configurações**. Deixar em branco usa a seleção automática da biblioteca.
+Dados locais: `%LOCALAPPDATA%\PriceRadarBR` no Windows e `~/.local/share/PriceRadarBR` no Linux. Logs podem conter URLs consultadas; revise antes de compartilhar.
 
-Shopee e outras lojas podem pedir login, CAPTCHA ou bloquear automação. O programa não resolve CAPTCHA nem contorna autenticação. Ele informa indisponibilidade; não preenche resultados com dados fictícios. Uma coleta vazia também pode indicar mudança de seletores, que ficam em `priceradar/scraper.py`.
+## English
 
-## Arquitetura e manutenção
+PriceRadar BR is a local desktop offer comparator for Brazilian marketplaces. It includes real-page diagnostics, model-aware filtering, canonical Amazon product URLs, local history/favorites and Excel/PDF exports. It does not bypass CAPTCHA or invent unavailable prices. See `docs/live-validation.json` for an actual dated collection report.
 
-- `main.py`: inicialização, log e entrada compatível com congelamento.
-- `priceradar/app.py`: interface; eventos da thread chegam à UI por fila.
-- `priceradar/scraper.py`: navegador, adaptadores HTML e relevância textual.
-- `priceradar/core.py`: modelo, centavos inteiros, URLs e SQLite.
-- `priceradar/exporters.py`: exportações com escrita temporária e troca atômica.
-- `tests/test_core.py`: testes offline reproduzíveis.
-- `requirements.txt`: dependências com faixas limitadas. `DEPENDENCIES.txt` no pacote compilado registra versões exatas usadas naquele build.
+## Licença
 
-Antes de distribuir comercialmente, teste o pacote em Windows limpo nas três lojas e reveja as licenças dos componentes incluídos; undetected-chromedriver é distribuído sob GPL-3.0. A assinatura digital do executável exige certificado próprio e não está incluída.
-
-## Referências
-
-- https://www.pyinstaller.org/ — compilar no sistema operacional de destino.
-- https://customtkinter.tomschimansky.com/documentation/packaging/ — recursos e empacotamento CustomTkinter.
-- https://github.com/ultrafunkamsterdam/undetected-chromedriver — instalação, dependências e limitações do navegador.
+MIT. As lojas e marcas citadas pertencem aos seus respectivos donos; este projeto não é afiliado a elas.
