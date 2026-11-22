@@ -1,0 +1,93 @@
+{
+  "query": "teclado logitech k380",
+  "started_at": "2026-11-22T19:19:51-03:00",
+  "stores": {
+    "Mercado Livre": {
+      "message": "A loja retornou uma página de erro. Tente novamente mais tarde.",
+      "count": 0,
+      "offers": []
+    },
+    "Amazon": {
+      "message": "Concluído",
+      "count": 9,
+      "offers": [
+        {
+          "store": "Amazon",
+          "title": "Teclado sem fio Logitech Pebble Keys 2 K380s com Conexão Bluetooth Easy-Switch e Pilha Inclusa - Compatível com PC, Mac, Chrome OS, Android, iOS e Apple TV, Layout US - Grafite",
+          "cents": 14990,
+          "url": "https://www.amazon.com.br/dp/B0CJ3WFW9H",
+          "captured": "2026-11-22T19:20:13-03:00"
+        },
+        {
+          "store": "Amazon",
+          "title": "Teclado sem fio Logitech Pebble Keys 2 K380s com Conexão Bluetooth Easy-Switch e Pilha Inclusa - Compatível com PC, Mac, Chrome OS, Android, iOS e Apple TV, Layout US - Branco",
+          "cents": 14990,
+          "url": "https://www.amazon.com.br/dp/B0CJ3J2WCR",
+          "captured": "2026-11-22T19:20:13-03:00"
+        },
+        {
+          "store": "Amazon",
+          "title": "Teclado sem fio Logitech Pebble Keys 2 K380s com Conexão Bluetooth Easy-Switch, Layout ABNT2, Atalhos Personalizáveis, Slim, Portátil, para Windows, macOS, iPadOS, Android, ChromeO - Grafite",
+          "cents": 19800,
+          "url": "https://www.amazon.com.br/dp/B0HHPPLPNZ",
+          "captured": "2026-11-22T19:20:13-03:00"
+        },
+        {
+          "store": "Amazon",
+          "title": "Teclado sem fio Logitech Pebble Keys 2 K380s com Conexão Bluetooth Easy-Switch e Pilha Inclusa - Compatível com PC, Mac, Chrome OS, Android, iOS e Apple TV, Layout US - Rosa",
+          "cents": 14990,
+          "url": "https://www.amazon.com.br/dp/B0CJ3P5RX9",
+          "captured": "2026-11-22T19:20:13-03:00"
+        },
+        {
+          "store": "Amazon",
+          "title": "Teclado sem fio Logitech Pebble Keys 2 K380s com Conexão Bluetooth Easy-Switch, Layout ABNT2, Atalhos Personalizáveis, Slim, Portátil, para Windows, macOS, iPadOS, Android, ChromeO - Branco",
+          "cents": 21242,
+          "url": "https://www.amazon.com.br/dp/B0HHPXVYDT",
+          "captured": "2026-11-22T19:20:13-03:00"
+        },
+        {
+          "store": "Amazon",
+          "title": "Kit Mouse Sem Fio Logitech Pebble 2 M350s Grafite + Teclado Sem fio Logitech Pebble Keys 2 K380s Grafite",
+          "cents": 25365,
+          "url": "https://www.amazon.com.br/dp/B0DVCHL7PG",
+          "captured": "2026-11-22T19:20:13-03:00"
+        },
+        {
+          "store": "Amazon",
+          "title": "Teclado sem fio Logitech Pebble Keys 2 K380s com Conexão Bluetooth Easy-Switch, Layout ABNT2, Atalhos Personalizáveis, Slim, Portátil, para Windows, macOS, iPadOS, Android, ChromeO - Rosa",
+          "cents": 21243,
+          "url": "https://www.amazon.com.br/dp/B0HHPRQ4DT",
+          "captured": "2026-11-22T19:20:13-03:00"
+        },
+        {
+          "store": "Amazon",
+          "title": "Kit Mouse Sem Fio Logitech Pebble 2 M350s Branco + Teclado Sem fio Logitech Pebble Keys 2 K380s Branco",
+          "cents": 22980,
+          "url": "https://www.amazon.com.br/dp/B0DVCH74PR",
+          "captured": "2026-11-22T19:20:13-03:00"
+        },
+        {
+          "store": "Amazon",
+          "title": "Kit Mouse Sem Fio Logitech Pebble 2 M350s Rosa + Teclado Sem fio Logitech Pebble Keys 2 K380s Rosa",
+          "cents": 22980,
+          "url": "https://www.amazon.com.br/dp/B0DVCHGYYY",
+          "captured": "2026-11-22T19:20:13-03:00"
+        }
+      ]
+    },
+    "Shopee": {
+      "message": "A loja pediu login, CAPTCHA ou verificação nesta conexão. Consulta não contornada.",
+      "count": 0,
+      "offers": []
+    }
+  },
+  "events": [
+    {
+      "kind": "done",
+      "value": false
+    }
+  ],
+  "finished_at": "2026-11-22T19:20:16-03:00",
+  "total_offers": 9
+}

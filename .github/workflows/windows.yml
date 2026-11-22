@@ -1,6 +1,9 @@
 name: Build Windows
 on:
+  pull_request:
   workflow_dispatch:
+  push:
+    tags: ['v*']
 permissions:
   contents: read
 jobs:
@@ -12,18 +15,47 @@ jobs:
         with:
           python-version: '3.11'
           architecture: x64
+          cache: pip
       - run: python -m pip install -r requirements.txt
       - run: python -m unittest discover -s tests -v
-      - run: python -m PyInstaller --noconfirm --clean --onedir --windowed --name PriceRadarBR --collect-all customtkinter --collect-all undetected_chromedriver --collect-all reportlab --hidden-import PIL._tkinter_finder main.py
+      - run: python -m PyInstaller --noconfirm --clean --onedir --windowed --name PriceRadarBR --collect-all customtkinter --collect-all selenium --collect-all reportlab --hidden-import PIL._tkinter_finder main.py
       - name: Verify executable imports
         shell: pwsh
         run: |
           $p = Start-Process dist/PriceRadarBR/PriceRadarBR.exe -ArgumentList '--self-test' -Wait -PassThru
           if ($p.ExitCode -ne 0) { throw 'Executable smoke test failed' }
+      - name: Verify packaged Selenium and ChromeDriver
+        shell: pwsh
+        env:
+          PRICERADAR_HEADLESS: '1'
+        run: |
+          $p = Start-Process dist/PriceRadarBR/PriceRadarBR.exe -ArgumentList '--browser-self-test' -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw 'Packaged browser smoke test failed' }
       - run: python -m pip freeze > dist/PriceRadarBR/DEPENDENCIES.txt
       - run: Copy-Item README.md dist/PriceRadarBR/README.md
+      - name: Package portable Windows build
+        shell: pwsh
+        run: Compress-Archive -Path dist/PriceRadarBR/* -DestinationPath dist/PriceRadarBR-Windows.zip -Force
       - uses: actions/upload-artifact@v4
         with:
           name: PriceRadarBR-Windows
-          path: dist/PriceRadarBR/
+          path: dist/PriceRadarBR-Windows.zip
           if-no-files-found: error
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: PriceRadarBR-Windows
+          path: artifacts
+      - name: Publish release ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title "PriceRadar BR $TAG" --generate-notes
+          gh release upload "$TAG" artifacts/PriceRadarBR-Windows.zip --clobber

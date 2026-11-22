@@ -9,7 +9,7 @@ if errorlevel 1 goto fail
 if errorlevel 1 goto fail
 .venv\Scripts\python -m unittest discover -s tests -v
 if errorlevel 1 goto fail
-.venv\Scripts\python -m PyInstaller --noconfirm --clean --onedir --windowed --name PriceRadarBR --collect-all customtkinter --collect-all undetected_chromedriver --collect-all reportlab --hidden-import PIL._tkinter_finder main.py
+.venv\Scripts\python -m PyInstaller --noconfirm --clean --onedir --windowed --name PriceRadarBR --collect-all customtkinter --collect-all selenium --collect-all reportlab --hidden-import PIL._tkinter_finder main.py
 if errorlevel 1 goto fail
 .venv\Scripts\python -m pip freeze > dist\PriceRadarBR\DEPENDENCIES.txt
 copy README.md dist\PriceRadarBR\README.md >nul

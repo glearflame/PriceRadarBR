@@ -66,13 +66,8 @@ class App(ctk.CTk):
         self.heading.configure(text='Do seu jeito'); self.clear(); self.visible=[]
         ctk.CTkLabel(self.content,text='APARÊNCIA',text_color=MUTED).pack(anchor='w',pady=(18,8))
         theme=ctk.CTkSegmentedButton(self.content,values=['Escuro','Claro'],command=self.theme); theme.set('Escuro' if ctk.get_appearance_mode()=='Dark' else 'Claro'); theme.pack(anchor='w')
-        ctk.CTkLabel(self.content,text='Versão principal do Chrome (opcional, ex.: 140)\nUse somente se houver incompatibilidade do driver.',justify='left').pack(anchor='w',pady=(28,8))
-        version=ctk.CTkEntry(self.content,placeholder_text='Automática'); version.insert(0,self.db.setting('chrome') or ''); version.pack(anchor='w')
-        def save():
-            value=version.get().strip()
-            if value and (not value.isdigit() or not 100<=int(value)<=999): self.notify('Informe uma versão válida ou deixe vazio.'); return
-            self.db.setting('chrome',value); self.notify('Configuração salva.')
-        ctk.CTkButton(self.content,text='Salvar',command=save,fg_color=ACCENT).pack(anchor='w',pady=12)
+        ctk.CTkLabel(self.content,text='NAVEGADOR',text_color=MUTED).pack(anchor='w',pady=(28,8))
+        ctk.CTkLabel(self.content,text='O Selenium seleciona automaticamente um driver compatível com Chrome/Chromium.\nEm Linux sem ambiente gráfico, a consulta usa modo headless.\nPRICERADAR_HEADLESS=1 força headless; =0 força janela.',justify='left',text_color=MUTED).pack(anchor='w')
         ctk.CTkLabel(self.content,text='Ctrl+K  Buscar     Enter  Comparar     Esc  Cancelar     Ctrl+E  Excel\n\nAs consultas abrem uma janela do Chrome e não usam sua sessão pessoal.\nLogin ou CAPTCHA podem impedir a coleta; tente abrir a loja manualmente.\n\nHistórico e favoritos ficam apenas neste computador.\nResultados são candidatos: confira modelo, voltagem, tamanho e vendedor.',justify='left',text_color=MUTED).pack(anchor='w',pady=24)
     def theme(self,value):
         mode='dark' if value=='Escuro' else 'light'; ctk.set_appearance_mode(mode); self.db.setting('theme',mode)
@@ -84,8 +79,7 @@ class App(ctk.CTk):
         if q.startswith(('http://','https://')) and not valid_url(q): self.notify('Use um link HTTPS completo de uma das três lojas.'); return
         self.offers=[]; self.visible=[]; self.resolved=q; self.cancel.clear(); self.busy=True; self.navigate('search'); self.clear()
         self.notify('Preparando consulta…'); self.search_button.configure(text='Cancelar'); self.progress.start(); self.store_messages=[]
-        version=self.db.setting('chrome')
-        threading.Thread(target=run,args=(q,lambda k,v:self.events.put((k,v)),self.cancel,int(version) if version else None),daemon=True).start()
+        threading.Thread(target=run,args=(q,lambda k,v:self.events.put((k,v)),self.cancel),daemon=True).start()
     def stop(self):
         if self.busy: self.cancel.set(); self.notify('Cancelando… aguardando o navegador terminar a operação atual.')
     def poll(self):
